@@ -6,11 +6,10 @@ import { z } from 'zod';
  
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
-
 const FormSchema = z.object({
-        id: z.string(),
-        customerId: z.string({
-        invalid_type_error: 'Please select a customer.',
+    id: z.string(),
+    customerId: z.string({
+      invalid_type_error: 'Please select a customer.',
     }),
     amount: z.coerce
       .number()
@@ -20,7 +19,6 @@ const FormSchema = z.object({
     }),
     date: z.string(),
 });
-
 
 const CreateInvoice = FormSchema.omit({id: true, date: true});
 const UpdateInvoice = FormSchema.omit({ id: true, date: true });
@@ -51,7 +49,6 @@ export async function createInvoice(prevState: State, formData: FormData) {
     const { customerId, amount, status } = validateFields.data;
     const amountInCents = amount * 100;
     const date = new Date().toISOString().split('T')[0];
-
 
     try {
         await sql`
