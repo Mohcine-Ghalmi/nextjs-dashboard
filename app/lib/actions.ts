@@ -34,18 +34,18 @@ export type State = {
 
 export async function createInvoice(prevState: State, formData: FormData) {
     const validateFields = CreateInvoice.safeParse({
-        customerId: formData.get('customerId'),
-        amount: formData.get('amount'),
-        status: formData.get('status'),
+      customerId: formData.get('customerId'),
+      amount: formData.get('amount'),
+      status: formData.get('status'),
     });
- 
+   
     if (!validateFields.success) {
-        return {
-            error: validateFields.error.flatten().fieldErrors,
-            message: 'Missing Fields. Failed to Create Invoice.',
-        };
+      return {
+        errors: validateFields.error.flatten().fieldErrors,
+        message: 'Missing Fields. Failed to Create Invoice.',
+      };
     }
- 
+   
     const { customerId, amount, status } = validateFields.data;
     const amountInCents = amount * 100;
     const date = new Date().toISOString().split('T')[0];
@@ -90,7 +90,7 @@ export async function updateInvoice(
    
     const { customerId, amount, status } = validatedFields.data;
     const amountInCents = amount * 100;
-   
+
     try {
       await sql`
         UPDATE invoices
@@ -103,7 +103,8 @@ export async function updateInvoice(
    
     revalidatePath('/dashboard/invoices');
     redirect('/dashboard/invoices');
-  }
+}
+
 export async function deleteInvoice(id: string) {
     // throw new Error('Failed to Delete Invoice');
 
